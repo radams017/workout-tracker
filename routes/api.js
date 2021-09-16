@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const db = require("../models/");
+const db = require("../models");
 
-router.get('/api/', (req, res) => {
+router.get('/api', (req, res) => {
  db.Workout.find({}).then(data => {
     res.json(data);
   }).catch(err => {
