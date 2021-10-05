@@ -12,7 +12,31 @@ router.get("/stats", function (req, res) {
 
 // populate main page
 router.get("/api/workouts", (req, res) => {
-  db.Workout.find({})
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" },
+      },
+    },
+  ])
+    // .sort({ date: -1 })
+    // .limit(1)
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
+router.get("/api/workouts/range", (req, res) => {
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" },
+      },
+    },
+  ])
     .then((data) => {
       res.json(data);
     })
@@ -31,14 +55,24 @@ router.post("/api/workouts", (req, res) => {
   });
 });
 
-router.post("/api/workouts/:id", (req, res) => {
-  db.Workout.findOneAndUpdate({ _id: req.params.id }, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(data);
+router.put("/api/workouts/:id", (req, res) => {
+  db.Workout.findOneAndUpdate(
+    { _id: req.params.id },
+    {
+      $push: {
+        exercises: {
+          ...req.body,
+        },
+      },
+    },
+    (err, data) => {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(data);
+      }
     }
-  });
+  );
 });
 
 // router.post("/api/transaction", ({ body }, res) => {
