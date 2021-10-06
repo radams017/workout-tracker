@@ -19,8 +19,8 @@ router.get("/api/workouts", (req, res) => {
       },
     },
   ])
-    // .sort({ date: -1 })
-    // .limit(1)
+    .sort({ date: -1 })
+    .limit(1)
     .then((data) => {
       res.json(data);
     })
